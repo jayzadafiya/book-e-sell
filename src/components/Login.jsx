@@ -4,6 +4,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -42,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: 10,
   },
   login_main: {
-    marginTop:50,
+    marginTop: 50,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
@@ -57,8 +59,8 @@ const useStyles = makeStyles((theme) => ({
     color: '#414141',
     fontSize: 20,
     paddingBottom: 20,
-    fontWeight:"bold" ,
-    fontStyle:"bold"
+    fontWeight: "bold",
+    fontStyle: "bold"
   },
   paragraph: {
     color: '#838383',
@@ -95,33 +97,40 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 33,
 
     '&:hover': {
-     color:"red",
+      color: "red",
     },
   },
- 
+
 }));
+
+const validationSchema = Yup.object().shape({
+  email: Yup.string().email('Invalid email format.')
+    .required('Email is required.')
+    .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Invalid email format. It should contain a dot (.) symbol.'),
+  password: Yup.string().min(8, 'Password must be at least 8 characters long.')
+    .required('Password is required.')
+    .matches(/^(?=.*[A-Z])/, 'Password must contain at least one uppercase letter.'),
+});
 
 const Login = () => {
   const classes = useStyles();
-  const emailRef = useRef();
-  const passwordRef = useRef();
-  const [details,setDetails]=useState({
-    email:"",
-    password:""
+  // const [details,setDetails]=useState({
+  //   email:"",
+  //   password:""
 
-  });
+  // });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(details);
+    console.log(e);
   };
 
-  const handleChange=(e,property)=>{
-    setDetails({
-      ...details,
-      [property]:e.target.value
-    })
-  }
+  // const handleChange=(e,property)=>{
+  //   setDetails({
+  //     ...details,
+  //     [property]:e.target.value
+  //   })
+  // }
 
   return (
     <div className={classes.container}>
@@ -159,12 +168,12 @@ const Login = () => {
           <div className={classes.register}>
             <Typography variant="h2" className={classes.heading}>
               Registered Customer
-            </Typography> 
+            </Typography>
             <hr />
             <p className={classes.paragraph}>
               If you have an account with us, please log in.
             </p>
-            <form onSubmit={handleSubmit}>
+            {/* <form onSubmit={handleSubmit}>
               <div className={classes.textField}>
                 <Typography>Email Address *</Typography>
                 <TextField
@@ -192,7 +201,44 @@ const Login = () => {
               <Button type="submit" className={classes.loginBtn} >
                 Login
               </Button>
-            </form>
+            </form> */}
+
+            <Formik
+              initialValues={{ email: '', password: '' }}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+            >
+              {/* Formik's touched prop is an object that keeps track of the touched state for each form field.  */}
+              {({ errors, touched }) => (
+                <Form>
+                  <div className={classes.textField}>
+                    <Typography>Email Address *</Typography>
+                    <Field
+                      type="email"
+                      name="email"
+                      as={TextField}
+                      variant="outlined"
+                      error={touched.email && !!errors.email}
+                      helperText={touched.email && errors.email}
+                    />
+                  </div>
+                  <div className={classes.textField}>
+                    <Typography>Password *</Typography>
+                    <Field
+                      type="password"
+                      name="password"
+                      as={TextField}
+                      variant="outlined"
+                      error={touched.password && !!errors.password}
+                      helperText={touched.password && errors.password}
+                    />
+                  </div>
+                  <Button type="submit" className={classes.loginBtn}>
+                    Login
+                  </Button>
+                </Form>
+              )}
+            </Formik>
 
           </div>
         </div>
