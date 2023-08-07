@@ -105,8 +105,7 @@ const useStyles = makeStyles((theme) => ({
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email format.')
-    .required('Email is required.')
-    .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Invalid email format. It should contain a dot (.) symbol.'),
+    .required('Email is required.'),
   password: Yup.string().min(8, 'Password must be at least 8 characters long.')
     .required('Password is required.')
     .matches(/^(?=.*[A-Z])/, 'Password must contain at least one uppercase letter.'),
