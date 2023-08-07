@@ -1,10 +1,13 @@
 import React from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
+
 
 const useStyles = makeStyles((theme) => ({
   registerContainer: {
@@ -86,14 +89,31 @@ const useStyles = makeStyles((theme) => ({
   passwordMargin: {
     marginTop: theme.spacing(2),
   },
+  error:{
+    color:"red"
+  },
 }));
+
+const validationSchema = Yup.object().shape({
+  firstName: Yup.string().required('First Name is required'),
+  lastName: Yup.string().required('Last Name is required'),
+  email: Yup.string()
+    .email('Invalid email format')
+    .required('Email is required'),
+  password: Yup.string()
+    .min(8, 'Password must be at least 8 characters')
+    .required('Password is required')
+    .matches(/^(?=.*[A-Z])/, 'Password must contain at least one uppercase letter'),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref('password'), null], 'Passwords must match')
+    .required('Confirm Password is required'),
+});
 
 const Register = () => {
   const classes = useStyles();
 
-  const submithandler = (e) => {
-    e.preventDefault();
-    // Add your submit logic here
+  const handleSubmit = (values) => {
+    console.log('Form submitted with values:', values);
   };
 
   return (
@@ -111,87 +131,235 @@ const Register = () => {
           </li>
         </ol>
       </div>
-       
-        <h1 className={classes.headerName}>
-          Login or Create an Account
-        </h1>
-      <form onSubmit={submithandler}>
-        <div className={classes.account}>
-          <Typography variant="h2" className={classes.accountHeading}>
-            Personal Information
-          </Typography>
-          <hr />
-          <Typography color="textSecondary" className={classes.accountText}>
-            Please enter the following information to create your account.
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <TextField
-                label="First Name *"
-                variant="outlined"
-                fullWidth
-                required
-                className={classes.personalInfoInput}
-              />
+
+      <h1 className={classes.headerName}>
+        Login or Create an Account
+      </h1>
+
+      <Formik
+        initialValues={{
+          firstName: '',
+          lastName: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+        }}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+
+        <Form >
+          <div className={classes.account}>
+            <Typography variant="h2" className={classes.accountHeading}>
+              Personal Information
+            </Typography>
+            <hr />
+            <Typography color="textSecondary" className={classes.accountText}>
+              Please enter the following information to create your account.
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography>First Name *</Typography>
+                <Field
+                  type="text"
+                  name="firstName"
+                  as={TextField}
+                  variant="outlined"
+                  className={classes.personalInfoInput}
+                  fullWidth
+
+                />
+                <ErrorMessage name="firstName" component="div" className={classes.error} />
+              </Grid>
+              <Grid item xs={6}>
+                <Typography>Last Name *</Typography>
+                <Field
+                  type="text"
+                  name="lastName"
+                  as={TextField}
+                  variant="outlined"
+                  fullWidth
+                  className={classes.personalInfoInput}
+                />
+                <ErrorMessage name="lastName" component="div" className={classes.error}  />
+              </Grid>
+              <Grid item xs={12}>
+                <Typography>Email Address *</Typography>
+                <Field
+                  className={classes.emailInput}
+                  fullWidth
+                  type="email"
+                  name="email"
+                  as={TextField}
+                  variant="outlined"
+                />
+                <ErrorMessage name="email" component="div" className={classes.error} />
+              </Grid>
             </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label="Last Name *"
-                variant="outlined"
-                fullWidth
-                required
-                className={classes.personalInfoInput}
-              />
+            <Typography variant="h5" className={classes.accountHeading}>
+              Login Information
+            </Typography>
+            <hr />
+            <br />
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography>Password *</Typography>
+                <Field
+                  type="password"
+                  name="password"
+                  as={TextField}
+                  variant="outlined"
+                  fullWidth
+                  className={classes.passwordInput}
+                  />
+                <ErrorMessage name="password" component="div" className={classes.error} />
+              </Grid>
+              <Grid item xs={6}>
+             
+                <Typography>Confirm Password *</Typography>
+                <Field
+                  type="password"
+                  name="confirmPassword"
+                  as={TextField}
+                  variant="outlined"
+                  fullWidth
+                  className={classes.passwordInput}
+                />
+                <ErrorMessage name="confirmPassword" component="div" className={classes.error} />
+
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Email Address *"
-                variant="outlined"
-                fullWidth
-                required
-                className={classes.emailInput}
-              />
-            </Grid>
-          </Grid>
-          <Typography variant="h5" className={classes.accountHeading}>
-            Login Information
-          </Typography>
-          <hr />
-          <br />
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <TextField
-                label="Password *"
-                variant="outlined"
-                fullWidth
-                type="password"
-                required
-                className={classes.passwordInput}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label="Confirm Password *"
-                variant="outlined"
-                fullWidth
-                type="password"
-                required
-                className={classes.passwordInput}
-              />
-            </Grid>
-          </Grid>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            className={classes.registerButton}
-          >
-            Register
-          </Button>
-        </div>
-      </form>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              className={classes.registerButton}
+            >
+              Register
+            </Button>
+          </div>
+        </Form>
+      </Formik>
+
     </Container>
   );
 }
 
 export default Register;
+
+// import React from 'react';
+// import { Formik, Form, Field, ErrorMessage } from 'formik';
+// import * as Yup from 'yup';
+// import Button from '@material-ui/core/Button';
+// import TextField from '@material-ui/core/TextField';
+// import Typography from '@material-ui/core/Typography';
+
+// const validationSchema = Yup.object().shape({
+//   firstName: Yup.string().required('First Name is required'),
+//   lastName: Yup.string().required('Last Name is required'),
+//   email: Yup.string()
+//     .email('Invalid email format')
+//     .required('Email is required'),
+//   password: Yup.string()
+//     .min(8, 'Password must be at least 8 characters')
+//     .required('Password is required')
+//     .matches(/^(?=.*[A-Z])/, 'Password must contain at least one uppercase letter'),
+//   confirmPassword: Yup.string()
+//     .oneOf([Yup.ref('password'), null], 'Passwords must match')
+//     .required('Confirm Password is required'),
+// });
+
+// const Register = () => {
+//   const handleSubmit = (values) => {
+//     console.log('Form submitted with values:', values);
+//   };
+
+//   return (
+//     <div>
+//       <h1>Register Page</h1>
+//       <Formik
+//         initialValues={{
+//           firstName: '',
+//           lastName: '',
+//           email: '',
+//           password: '',
+//           confirmPassword: '',
+//         }}
+//         validationSchema={validationSchema}
+//         onSubmit={handleSubmit}
+//       >
+//         <Form>
+//           <div className={classes.account}>
+//             <Typography variant="h2" className={classes.accountHeading}>
+//               Personal Information
+//             </Typography>
+//             <hr />
+//             <Typography color="textSecondary" className={classes.accountText}>
+//               Please enter the following information to create your account.
+//             </Typography>
+//             <div>
+//               <Typography>First Name *</Typography>
+//               <Field
+//                 type="text"
+//                 name="firstName"
+//                 as={TextField}
+//                 variant="outlined"
+//               />
+//               <ErrorMessage name="firstName" component="div" />
+//             </div>
+
+//             <div>
+//               <Typography>Last Name *</Typography>
+//               <Field
+//                 type="text"
+//                 name="lastName"
+//                 as={TextField}
+//                 variant="outlined"
+//               />
+//               <ErrorMessage name="lastName" component="div" />
+//             </div>
+
+//             <div>
+//               <Typography>Email Address *</Typography>
+//               <Field
+//                 type="email"
+//                 name="email"
+//                 as={TextField}
+//                 variant="outlined"
+//               />
+//               <ErrorMessage name="email" component="div" />
+//             </div>
+
+//             <div>
+//               <Typography>Password *</Typography>
+//               <Field
+//                 type="password"
+//                 name="password"
+//                 as={TextField}
+//                 variant="outlined"
+//               />
+//               <ErrorMessage name="password" component="div" />
+//             </div>
+
+//             <div>
+//               <Typography>Confirm Password *</Typography>
+//               <Field
+//                 type="password"
+//                 name="confirmPassword"
+//                 as={TextField}
+//                 variant="outlined"
+//               />
+//               <ErrorMessage name="confirmPassword" component="div" />
+//             </div>
+
+//             <Button type="submit" variant="contained" color="primary">
+//               Register
+//             </Button>
+//           </div>
+//         </Form>
+//       </Formik>
+//     </div>
+//   );
+// };
+
+// export default Register;
