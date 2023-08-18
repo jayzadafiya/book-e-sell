@@ -185,7 +185,7 @@ export class BookRepository {
         return new Result({
           code: HttpStatusCode.Forbidden,
           key: ErrorCode.Forbidden,
-          error: `Foreign key error, Book added in user's cart`,
+          error: `Book added in user's cart`,
         });
       }
       // Delete the book from the database

@@ -85,15 +85,7 @@ export class UserRepository {
     userDetails: UserModel
   ): Promise<Result<UserModel | null>> => {
     const oldUser = await User.findOne({ id: userDetails.id });
-    if (userDetails.email === "admin@tatvasoft.com" || oldUser.roleId === 1) {
-      return new Result({
-        code: HttpStatusCode.Forbidden,
-        error:
-          "You can not edit admin's credinetial. Please try with you personal account.",
-        key: ErrorCode.Forbidden,
-        result: null,
-      });
-    }
+   
 
     const userRole = roles.find((r) => r.id === userDetails.roleId);
     const roleId = userRole
@@ -195,7 +187,7 @@ export class UserRepository {
   };
 
   public async deleteUser(userId: number): Promise<Result<boolean>> {
-    if (userId === 1 || userId === 2) {
+    if (userId==1) {
       return new Result({
         code: HttpStatusCode.Forbidden,
         error: "You are not authorized to delete this user. 🤣🤣",

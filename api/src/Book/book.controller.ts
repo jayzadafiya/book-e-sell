@@ -5,7 +5,7 @@ import { BookModel } from "./book.model";
 import { ErrorCode } from "./../utility/enum";
 import { HttpStatusCode } from "./../utility/enum";
 
-const MaxImageSize = 10000; // 10kb
+const MaxImageSize = 100000; // 10kb
 export class BookController {
   constructor(private readonly bookService: BookService) {
     this.bookService = bookService;
@@ -59,7 +59,7 @@ export class BookController {
       return baseController.sendResult(res, {
         code: HttpStatusCode.BadRequest,
         key: ErrorCode.BadRequest,
-        error: "Image size must be less than 10kb.",
+        error: "Image size must be less than 100kb.",
         result: null,
       });
     }
@@ -83,7 +83,7 @@ export class BookController {
       return baseController.sendResult(res, {
         code: HttpStatusCode.BadRequest,
         key: ErrorCode.BadRequest,
-        error: "Image size must be less than 10kb.",
+        error: "Image size must be less than 100kb.",
         result: null,
       });
     }

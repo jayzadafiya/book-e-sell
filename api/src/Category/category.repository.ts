@@ -137,15 +137,18 @@ export class CategoryRespository {
         });
       }
 
-      if ((await Book.find({ categoryId })).length > 0) {
-        return new Result({
-          code: HttpStatusCode.Forbidden,
-          key: ErrorCode.Forbidden,
-          error: `Foreign key error, Books found with this category.`,
-        });
-      }
-
+      // if ((await Book.find({ categoryId })).length > 0) {
+        // return new Result({
+        //   code: HttpStatusCode.Forbidden,
+        //   key: ErrorCode.Forbidden,
+        //   error: `Foreign key error, Books found with this category.`,
+        // });
+      // }
+      // console.log('====================================');
+      // console.log(category);
+      // console.log('====================================');
       // Delete the category from the database
+      await Book.deleteOne({ categoryId: categoryId });
       await Category.deleteOne({ id: categoryId });
 
       return new Result({
